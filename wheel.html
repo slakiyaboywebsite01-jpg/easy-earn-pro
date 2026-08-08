@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Earn Pro - Spin Wheel</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background-color: #0d1117;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            background: #161b22;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #30363d;
+        }
+        .back-btn {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .coins-display {
+            background: #21262d;
+            border: 1px solid #00e676;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: #00e676;
+            font-weight: 700;
+        }
+
+        /* Wheel Container */
+        .wheel-box {
+            position: relative;
+            margin: 20px auto;
+            width: 280px;
+            height: 280px;
+        }
+        .arrow {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 25px solid #ff5252;
+            z-index: 10;
+        }
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid #30363d;
+            transition: transform 4s cubic-bezier(0.15, 0.99, 0.18, 0.99);
+        }
+
+        /* Spin Button */
+        .btn-spin {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #00c853, #00e676);
+            color: #0d1117;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+            margin-bottom: 20px;
+        }
+        .btn-spin:disabled {
+            background: #30363d;
+            color: #8b949e;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        
+        /* Result Msg */
+        .result-msg {
+            font-size: 18px;
+            font-weight: 600;
+            color: #00e676;
+            min-height: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <a href="main.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back</a>
+            <h2>Spin & Win</h2>
+            <div class="coins-display"><i class="fa-solid fa-coins"></i> <span id="userCoins">0</span></div>
+        </div>
+
+        <!-- Wheel Canvas -->
+        <div class="wheel-box">
+            <div class="arrow"></div>
+            <canvas id="wheel" width="280" height="280"></canvas>
+        </div>
+
+        <!-- Result -->
+        <div class="result-msg" id="resultMsg">Spin the wheel to earn coins!</div>
+
+        <!-- Spin Button -->
+        <button class="btn-spin" id="spinBtn" onclick="spinWheel()">SPIN NOW</button>
+    </div>
+
+    <script>
+        // FIREBASE CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2hkHUlQ1A6XxZmVijhVqhVsPPVZzoJ5Q",
+            authDomain: "easy-earn-db419.firebaseapp.com",
+            databaseURL: "https://easy-earn-db419-default-rtdb.firebaseio.com",
+            projectId: "easy-earn-db419",
+            storageBucket: "easy-earn-db419.firebasestorage.app",
+            messagingSenderId: "443404620896",
+            appId: "1:443404620896:web:4a5637954440a8f8c09f05",
+            measurementId: "G-MTY2FYGFFQ"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
+        let currentUserId = null;
+        let currentCoins = 0;
+        const rewards = [10, 20, 50, 5, 100, 15, 30, 25];
+        const colors = ["#21262d", "#00c853", "#21262d", "#00e676", "#21262d", "#00c853", "#21262d", "#00e676"];
+        
+        let currentRotation = 0;
+        let isSpinning = false;
+
+        // Fetch User Data
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUserId = user.uid;
+                db.ref('users/' + user.uid).on('value', snapshot => {
+                    const data = snapshot.val();
+                    if(data) {
+                        currentCoins = data.coins || 0;
+                        document.getElementById('userCoins').innerText = currentCoins;
+                    }
+                });
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        // Draw Wheel
+        const canvas = document.getElementById("wheel");
+        const ctx = canvas.getContext("2d");
+        const numSlices = rewards.length;
+        const sliceAngle = (2 * Math.PI) / numSlices;
+
+        function drawWheel() {
+            for (let i = 0; i < numSlices; i++) {
+                const angle = i * sliceAngle;
+                ctx.beginPath();
+                ctx.fillStyle = colors[i];
+                ctx.moveTo(140, 140);
+                ctx.arc(140, 140, 135, angle, angle + sliceAngle);
+                ctx.lineTo(140, 140);
+                ctx.fill();
+                ctx.stroke();
+
+                // Draw Text
+                ctx.save();
+                ctx.translate(140, 140);
+                ctx.rotate(angle + sliceAngle / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 16px Poppins";
+                ctx.fillText(rewards[i] + " PTS", 115, 5);
+                ctx.restore();
+            }
+        }
+        drawWheel();
+
+        // Spin Logic
+        function spinWheel() {
+            if (isSpinning) return;
+            isSpinning = true;
+            document.getElementById('spinBtn').disabled = true;
+            document.getElementById('resultMsg').innerText = "Spinning...";
+
+            const selectedIndex = Math.floor(Math.random() * numSlices);
+            const degreesPerSlice = 360 / numSlices;
+            
+            // Calculate rotation angle
+            const targetDegree = 360 - (selectedIndex * degreesPerSlice) - (degreesPerSlice / 2);
+            const totalRotation = currentRotation + 1800 + targetDegree; // 5 Full spins + target
+
+            canvas.style.transform = `rotate(${totalRotation}deg)`;
+            currentRotation = totalRotation;
+
+            setTimeout(() => {
+                const wonCoins = rewards[selectedIndex];
+                currentCoins += wonCoins;
+
+                // Update Firebase Database
+                db.ref('users/' + currentUserId).update({
+                    coins: currentCoins
+                }).then(() => {
+                    document.getElementById('resultMsg').innerText = `Congratulations! You Won ${wonCoins} Coins! 🎉`;
+                    isSpinning = false;
+                    document.getElementById('spinBtn').disabled = false;
+                });
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
