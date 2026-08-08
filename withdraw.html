@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Earn Pro - Withdraw</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background-color: #0d1117;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: #161b22;
+            min-height: 100vh;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #30363d;
+        }
+        .back-btn {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .coins-display {
+            background: #21262d;
+            border: 1px solid #00e676;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: #00e676;
+            font-weight: 700;
+        }
+
+        /* Form Box */
+        .form-card {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 25px 20px;
+            margin-top: 20px;
+        }
+        .input-group {
+            margin-bottom: 18px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: #8b949e;
+            margin-bottom: 8px;
+        }
+        .input-group select, .input-group input {
+            width: 100%;
+            padding: 14px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+        }
+        .input-group select:focus, .input-group input:focus {
+            border-color: #00e676;
+        }
+
+        /* Note Box */
+        .info-box {
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid #00e676;
+            color: #00e676;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+
+        /* Button */
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #00c853, #00e676);
+            color: #0d1117;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+        }
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .alert-msg {
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            display: none;
+            text-align: center;
+        }
+        .success { background: rgba(0, 230, 118, 0.2); color: #00e676; border: 1px solid #00e676; }
+        .error { background: rgba(255, 82, 82, 0.2); color: #ff5252; border: 1px solid #ff5252; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <a href="main.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back</a>
+            <h2>Withdraw</h2>
+            <div class="coins-display"><i class="fa-solid fa-coins"></i> <span id="userCoins">0</span></div>
+        </div>
+
+        <div class="form-card">
+            <div id="alertBox" class="alert-msg"></div>
+
+            <div class="info-box">
+                <i class="fa-solid fa-circle-info"></i> Minimum Withdrawal: 1,000 Coins
+            </div>
+
+            <!-- Payment Method -->
+            <div class="input-group">
+                <label>Select Payment Method</label>
+                <select id="payMethod" onchange="updateAccountLabel()">
+                    <option value="Ezcash">Ezcash (Mobile Wallet)</option>
+                    <option value="Binance">Binance (Pay ID / USDT)</option>
+                    <option value="Bybit">Bybit (UID / USDT)</option>
+                </select>
+            </div>
+
+            <!-- Account Info -->
+            <div class="input-group">
+                <label id="accountLabel">Ezcash Mobile Number</label>
+                <input type="text" id="accountDetail" placeholder="07XXXXXXXX">
+            </div>
+
+            <!-- Coins Amount -->
+            <div class="input-group">
+                <label>Coins to Withdraw</label>
+                <input type="number" id="withdrawCoins" placeholder="e.g. 1000">
+            </div>
+
+            <button class="btn-submit" onclick="requestWithdrawal()">SUBMIT REQUEST</button>
+        </div>
+
+        <div></div>
+    </div>
+
+    <script>
+        // FIREBASE CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2hkHUlQ1A6XxZmVijhVqhVsPPVZzoJ5Q",
+            authDomain: "easy-earn-db419.firebaseapp.com",
+            databaseURL: "https://easy-earn-db419-default-rtdb.firebaseio.com",
+            projectId: "easy-earn-db419",
+            storageBucket: "easy-earn-db419.firebasestorage.app",
+            messagingSenderId: "443404620896",
+            appId: "1:443404620896:web:4a5637954440a8f8c09f05",
+            measurementId: "G-MTY2FYGFFQ"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
+        let currentUserId = null;
+        let currentCoins = 0;
+        let userName = "";
+        let userEmail = "";
+
+        // Auth Listener
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUserId = user.uid;
+                db.ref('users/' + user.uid).on('value', snapshot => {
+                    const data = snapshot.val();
+                    if(data) {
+                        currentCoins = data.coins || 0;
+                        userName = data.name || "User";
+                        userEmail = data.email || "";
+                        document.getElementById('userCoins').innerText = currentCoins;
+                    }
+                });
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        // Label Dynamic Update
+        function updateAccountLabel() {
+            const method = document.getElementById('payMethod').value;
+            const label = document.getElementById('accountLabel');
+            const input = document.getElementById('accountDetail');
+
+            if (method === "Ezcash") {
+                label.innerText = "Ezcash Mobile Number";
+                input.placeholder = "07XXXXXXXX";
+            } else if (method === "Binance") {
+                label.innerText = "Binance Pay ID or USDT Address";
+                input.placeholder = "Enter Binance Pay ID / Address";
+            } else if (method === "Bybit") {
+                label.innerText = "Bybit UID or USDT Address";
+                input.placeholder = "Enter Bybit UID / Address";
+            }
+        }
+
+        function showAlert(msg, isSuccess) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.innerText = msg;
+            alertBox.className = "alert-msg " + (isSuccess ? "success" : "error");
+            alertBox.style.display = "block";
+        }
+
+        // Request Withdrawal
+        function requestWithdrawal() {
+            const method = document.getElementById('payMethod').value;
+            const account = document.getElementById('accountDetail').value.trim();
+            const coinsToWithdraw = parseInt(document.getElementById('withdrawCoins').value);
+
+            if (!account) {
+                showAlert("Please enter your payment account details.", false);
+                return;
+            }
+
+            if (isNaN(coinsToWithdraw) || coinsToWithdraw < 1000) {
+                showAlert("Minimum withdrawal limit is 1,000 Coins.", false);
+                return;
+            }
+
+            if (coinsToWithdraw > currentCoins) {
+                showAlert("You do not have enough coins!", false);
+                return;
+            }
+
+            // Deduct Coins and Save Withdrawal Request in Firebase
+            const newBalance = currentCoins - coinsToWithdraw;
+
+            db.ref('users/' + currentUserId).update({
+                coins: newBalance
+            }).then(() => {
+                db.ref('withdrawals').push({
+                    userId: currentUserId,
+                    userName: userName,
+                    userEmail: userEmail,
+                    method: method,
+                    accountDetails: account,
+                    coinsRequested: coinsToWithdraw,
+                    status: "Pending",
+                    createdAt: new Date().toISOString()
+                }).then(() => {
+                    showAlert("Withdrawal request submitted successfully!", true);
+                    document.getElementById('accountDetail').value = "";
+                    document.getElementById('withdrawCoins').value = "";
+                });
+            }).catch(error => {
+                showAlert("Error: " + error.message, false);
+            });
+        }
+    </script>
+</body>
+</html>
