@@ -3,10 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Easy Earn Pro - Welcome</title>
-    <!-- Google Fonts & FontAwesome Icons -->
+    
+    <!-- Monetag Verification Meta Tag -->
+    <meta name="monetag" content="ce716a019eeb9530b805ce66dcaf762e">
+    
+    <title>Easy Earn Pro - Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -21,147 +29,79 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 20px;
         }
-        .app-container {
+        .container {
             width: 100%;
-            max-width: 480px;
-            height: 100vh;
+            max-width: 400px;
             background: #161b22;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 30px 20px;
+            padding: 35px 20px;
+            border-radius: 16px;
+            border: 1px solid #30363d;
             text-align: center;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
-        .hero-section {
-            margin-top: 40px;
-        }
-        .icon-box {
-            width: 110px;
-            height: 110px;
-            background: linear-gradient(135deg, #00c853, #b2ff59);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto 20px auto;
-            box-shadow: 0 0 25px rgba(0, 200, 83, 0.4);
-        }
-        .icon-box i {
+        .logo-icon {
             font-size: 50px;
-            color: #0d1117;
+            color: #00e676;
+            margin-bottom: 15px;
         }
         h1 {
-            font-size: 28px;
-            font-weight: 700;
+            font-size: 24px;
             margin-bottom: 10px;
-            color: #ffffff;
         }
-        h1 span {
-            color: #00e676;
-        }
-        p.subtitle {
+        p {
             color: #8b949e;
             font-size: 14px;
-            line-height: 1.5;
+            margin-bottom: 25px;
         }
-        .features {
-            margin: 30px 0;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .feature-card {
-            background: #21262d;
-            padding: 15px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            border: 1px solid #30363d;
-            text-align: left;
-        }
-        .feature-card i {
-            font-size: 24px;
-            color: #00e676;
-            width: 30px;
-            text-align: center;
-        }
-        .feature-card div h4 {
-            font-size: 15px;
-            color: #fff;
-        }
-        .feature-card div p {
-            font-size: 12px;
-            color: #8b949e;
-        }
-        .btn-start {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #00c853, #00e676);
-            color: #0d1117;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
-            text-decoration: none;
+        .btn {
             display: block;
+            width: 100%;
+            padding: 12px;
+            background: #00e676;
+            color: #000;
+            font-weight: 700;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s;
         }
-        .btn-start:active {
-            transform: scale(0.98);
+        .btn:hover {
+            background: #00c853;
         }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <!-- Hero Header -->
-        <div class="hero-section">
-            <div class="icon-box">
-                <i class="fa-solid fa-coins"></i>
-            </div>
-            <h1>Easy Earn <span>Pro</span></h1>
-            <p class="subtitle">Play Games, Complete Tasks & Earn Real Cash Instantly!</p>
-        </div>
-
-        <!-- Features List -->
-        <div class="features">
-            <div class="feature-card">
-                <i class="fa-solid fa-gamepad"></i>
-                <div>
-                    <h4>Play Games & Spin</h4>
-                    <p>Earn coins by playing mini-games & spinning wheel.</p>
-                </div>
-            </div>
-
-            <div class="feature-card">
-                <i class="fa-solid fa-brain"></i>
-                <div>
-                    <h4>Math Quizzes</h4>
-                    <p>Solve simple math problems and get rewarded.</p>
-                </div>
-            </div>
-
-            <div class="feature-card">
-                <i class="fa-solid fa-wallet"></i>
-                <div>
-                    <h4>Fast Withdrawals</h4>
-                    <p>Get paid directly via Mobile Reload or Crypto (USDT).</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Start Button -->
-        <div>
-            <a href="login.html" class="btn-start">
-                Get Started <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>
-            </a>
-        </div>
+    <div class="container">
+        <i class="fa-solid fa-wallet logo-icon"></i>
+        <h1>Easy Earn Pro</h1>
+        <p>Play games, complete tasks & earn coins easily!</p>
+        <a href="login.html" class="btn">Get Started</a>
     </div>
 
+    <script>
+        // FIREBASE CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2hkHUlQ1A6XxZmVijhVqhVsPPVZzoJ5Q",
+            authDomain: "easy-earn-db419.firebaseapp.com",
+            databaseURL: "https://easy-earn-db419-default-rtdb.firebaseio.com",
+            projectId: "easy-earn-db419",
+            storageBucket: "easy-earn-db419.firebasestorage.app",
+            messagingSenderId: "443404620896",
+            appId: "1:443404620896:web:4a5637954440a8f8c09f05",
+            measurementId: "G-MTY2FYGFFQ"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        // Redirect to main app if logged in
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                window.location.href = "main.html";
+            }
+        });
+    </script>
 </body>
 </html>
