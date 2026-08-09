@@ -107,9 +107,6 @@
             cursor: pointer;
             transition: 0.3s;
         }
-        .submit-btn:hover {
-            background: #00c853;
-        }
         .submit-btn:disabled {
             background: #484f58;
             color: #8b949e;
@@ -197,22 +194,13 @@
             }
         });
 
-        // GENERATE RANDOM MATH QUESTION
+        // GENERATE SIMPLE ADDITION QUESTION ONLY
         function generateQuestion() {
-            const num1 = Math.floor(Math.random() * 50) + 10;
-            const num2 = Math.floor(Math.random() * 50) + 1;
-            const isAddition = Math.random() > 0.3; // 70% addition, 30% subtraction
-
-            if (isAddition) {
-                correctAnswer = num1 + num2;
-                document.getElementById('question').innerText = `${num1} + ${num2} = ?`;
-            } else {
-                // Ensure positive result for subtraction
-                const max = Math.max(num1, num2);
-                const min = Math.min(num1, num2);
-                correctAnswer = max - min;
-                document.getElementById('question').innerText = `${max} - ${min} = ?`;
-            }
+            const num1 = Math.floor(Math.random() * 40) + 10;
+            const num2 = Math.floor(Math.random() * 40) + 5;
+            
+            correctAnswer = num1 + num2;
+            document.getElementById('question').innerText = `${num1} + ${num2} = ?`;
 
             document.getElementById('answerInput').value = '';
             document.getElementById('result-msg').innerText = '';
@@ -233,11 +221,10 @@
 
             submitBtn.disabled = true;
 
-            if (parseInt(userInput) === correctAnswer) {
+            if (parseInt(userInput, 10) === correctAnswer) {
                 resultMsg.style.color = '#00e676';
                 resultMsg.innerText = 'Correct Answer! +5 Coins Added.';
 
-                // SAVE COINS TO FIREBASE SAFELY
                 const userCoinsRef = database.ref('users/' + currentUser.uid + '/coins');
                 userCoinsRef.transaction((currentValue) => {
                     return (currentValue || 0) + 5;
