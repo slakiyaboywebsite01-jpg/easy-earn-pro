@@ -132,7 +132,7 @@
         <!-- User Info Header -->
         <div class="header">
             <div class="user-info">
-                <h3 id="user-name">Loading...</h3>
+                <h3 id="user-name">User</h3>
                 <small style="color: #8b949e;">Welcome Back!</small>
             </div>
             <div class="coin-box">
@@ -207,32 +207,36 @@
 
         let currentUser = null;
 
-        // AUTH CHECK & DATA LOAD
+        // AUTH CHECK & DATA REALTIME SYNC
         auth.onAuthStateChanged(user => {
             if (user) {
                 currentUser = user;
-                database.ref('users/' + user.uid).on('value', snapshot => {
-                    const data = snapshot.val();
-                    if (data) {
-                        document.getElementById('user-name').innerText = data.username || "User";
-                        document.getElementById('user-coins').innerText = data.coins || 0;
+                
+                // Fetch Coins directly
+                database.ref('users/' + user.uid + '/coins').on('value', snapshot => {
+                    document.getElementById('user-coins').innerText = snapshot.val() || 0;
+                });
+
+                // Fetch Username directly
+                database.ref('users/' + user.uid + '/username').on('value', snapshot => {
+                    if (snapshot.exists()) {
+                        document.getElementById('user-name').innerText = snapshot.val();
                     }
                 });
+
             } else {
                 window.location.href = "login.html";
             }
         });
 
-        // DIRECT LINK AD & SAFE COIN ADD FUNCTION
+        // DIRECT LINK AD & COIN ADD FUNCTION
         const directLinkUrl = "https://www.effectivecpmnetwork.com/ge4dvmft?key=53ead59c0b1e593fdc17606cb2e41e49";
 
         function openDirectLinkAd() {
             if (!currentUser) return;
 
-            // Open Ad in new tab
             window.open(directLinkUrl, '_blank');
 
-            // Add +10 Coins reliably using Transaction
             const userCoinsRef = database.ref('users/' + currentUser.uid + '/coins');
             userCoinsRef.transaction((currentValue) => {
                 return (currentValue || 0) + 10;
