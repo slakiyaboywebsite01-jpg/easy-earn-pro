@@ -12,12 +12,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-    <!-- Adsterra Popunder / Social Bar Script 1 -->
-    <script src="https://pl30407530.effectivecpmnetwork.com/46/42/34/4642348016619734933dc249d97d7812.js"></script>
-    
-    <!-- Adsterra Popunder / Social Bar Script 2 -->
-    <script src="https://pl30407531.effectivecpmnetwork.com/87/a7/83/87a7839ccbbef6409876a9e0a590bd9b.js"></script>
-
     <style>
         * {
             margin: 0;
@@ -147,28 +141,28 @@
             </div>
         </div>
 
-        <!-- Adsterra Native Banner Placement -->
+        <!-- Adsterra Banner -->
         <div class="ad-container">
             <script async="async" data-cfasync="false" src="https://pl30586105.effectivecpmnetwork.com/ddfa585c0174aba472cef073b8d260d0/invoke.js"></script>
             <div id="container-ddfa585c0174aba472cef073b8d260d0"></div>
         </div>
 
-        <!-- High Revenue Direct Link Watch Ad Button -->
+        <!-- Watch Ad Button (+10 Coins) -->
         <button class="watch-ad-btn" onclick="openDirectLinkAd()">
-            <i class="fa-solid fa-play-circle"></i> Watch Ad & Earn +50 Coins
+            <i class="fa-solid fa-play-circle"></i> Watch Ad & Earn +10 Coins
         </button>
 
         <!-- Earnings Grid Menu -->
         <div class="grid-menu">
-            <a href="quiz.html" class="menu-card" onclick="triggerAdBeforePage(event, 'quiz.html')">
+            <a href="quiz.html" class="menu-card">
                 <i class="fa-solid fa-calculator"></i>
                 <span>Math Quiz</span>
             </a>
-            <a href="wheel.html" class="menu-card" onclick="triggerAdBeforePage(event, 'wheel.html')">
+            <a href="wheel.html" class="menu-card">
                 <i class="fa-solid fa-dharmachakra"></i>
                 <span>Spin Wheel</span>
             </a>
-            <a href="games.html" class="menu-card" onclick="triggerAdBeforePage(event, 'games.html')">
+            <a href="games.html" class="menu-card">
                 <i class="fa-solid fa-gamepad"></i>
                 <span>Offerwall / Games</span>
             </a>
@@ -178,7 +172,7 @@
             </a>
         </div>
 
-        <!-- Adsterra 160x300 Banner Placement -->
+        <!-- Adsterra Banner -->
         <div class="ad-container" style="margin-top: 20px;">
             <script>
               atOptions = {
@@ -211,7 +205,6 @@
         const auth = firebase.auth();
         const database = firebase.database();
 
-        let currentCoins = 0;
         let currentUser = null;
 
         // AUTH CHECK & DATA LOAD
@@ -222,8 +215,7 @@
                     const data = snapshot.val();
                     if (data) {
                         document.getElementById('user-name').innerText = data.username || "User";
-                        currentCoins = data.coins || 0;
-                        document.getElementById('user-coins').innerText = currentCoins;
+                        document.getElementById('user-coins').innerText = data.coins || 0;
                     }
                 });
             } else {
@@ -231,33 +223,20 @@
             }
         });
 
-        // ADSTERRA DIRECT LINK WATCH AD FUNCTIONALITY
+        // DIRECT LINK AD & SAFE COIN ADD FUNCTION
         const directLinkUrl = "https://www.effectivecpmnetwork.com/ge4dvmft?key=53ead59c0b1e593fdc17606cb2e41e49";
 
         function openDirectLinkAd() {
+            if (!currentUser) return;
+
             // Open Ad in new tab
             window.open(directLinkUrl, '_blank');
 
-            // Credit 50 coins to user
-            if (currentUser) {
-                currentCoins += 50;
-                database.ref('users/' + currentUser.uid).update({
-                    coins: currentCoins
-                }).then(() => {
-                    alert("Congratulations! 50 Coins added to your account.");
-                });
-            }
-        }
-
-        // NAVIGATION WITH DIRECT LINK TRIGGER FOR MAXIMUM CPM
-        function triggerAdBeforePage(event, pageUrl) {
-            event.preventDefault();
-            // Open Direct Link Ad
-            window.open(directLinkUrl, '_blank');
-            // Navigate to requested page
-            setTimeout(() => {
-                window.location.href = pageUrl;
-            }, 500);
+            // Add +10 Coins reliably using Transaction
+            const userCoinsRef = database.ref('users/' + currentUser.uid + '/coins');
+            userCoinsRef.transaction((currentValue) => {
+                return (currentValue || 0) + 10;
+            });
         }
     </script>
 </body>
