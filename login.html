@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Easy Earn Pro - Login & Register</title>
-    <!-- Google Fonts & FontAwesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Easy Earn Pro - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase SDK (Compat Version for Webview & GitHub Pages) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -21,169 +20,111 @@
             font-family: 'Poppins', sans-serif;
         }
         body {
-            background-color: #0d1117;
-            color: #ffffff;
+            background-color: #f0f4f8;
+            color: #1e293b;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 15px;
         }
-        .app-container {
+        .login-card {
             width: 100%;
-            max-width: 480px;
-            height: 100vh;
-            background: #161b22;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 30px 20px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            position: relative;
-        }
-        .logo-box {
+            max-width: 400px;
+            background: #ffffff;
+            padding: 35px 25px;
+            border-radius: 24px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
             text-align: center;
-            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
         }
-        .logo-box i {
-            font-size: 50px;
-            color: #00e676;
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #10b981, #06b6d4);
+        }
+        .logo-icon {
+            font-size: 48px;
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
-        .logo-box h2 {
-            font-size: 24px;
-            font-weight: 700;
+        .login-card h2 {
+            font-size: 22px;
+            color: #0f172a;
+            margin-bottom: 5px;
         }
-        .logo-box h2 span {
-            color: #00e676;
+        .login-card p {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 25px;
         }
-        .form-box {
-            background: #21262d;
-            padding: 25px 20px;
-            border-radius: 16px;
-            border: 1px solid #30363d;
-        }
-        .form-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .input-group {
-            margin-bottom: 15px;
-            position: relative;
-        }
-        .input-group i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #8b949e;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 14px 14px 14px 45px;
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 14px;
-            outline: none;
-            transition: 0.3s;
-        }
-        .input-group input:focus {
-            border-color: #00e676;
-        }
-        .btn-submit {
+        .form-control {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #00c853, #00e676);
-            color: #0d1117;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            color: #0f172a;
+            font-size: 15px;
+            outline: none;
+            margin-bottom: 15px;
             transition: 0.3s;
         }
-        .btn-submit:active {
-            transform: scale(0.98);
+        .form-control:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+            background: #ffffff;
         }
-        .toggle-text {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 13px;
-            color: #8b949e;
-        }
-        .toggle-text span {
-            color: #00e676;
-            font-weight: 600;
+        .auth-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 16px;
+            border: none;
+            border-radius: 12px;
             cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
         }
-        .alert-msg {
-            background: rgba(255, 82, 82, 0.2);
-            border: 1px solid #ff5252;
-            color: #ff5252;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            margin-bottom: 15px;
-            display: none;
-            text-align: center;
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+        #auth-msg {
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <div class="logo-box">
-            <i class="fa-solid fa-coins"></i>
-            <h2>Easy Earn <span>Pro</span></h2>
-        </div>
+    <div class="login-card">
+        <i class="fa-solid fa-coins logo-icon"></i>
+        <h2>Easy Earn Pro</h2>
+        <p>Login or Register to start earning</p>
 
-        <div id="alertBox" class="alert-msg"></div>
+        <input type="text" id="username" class="form-control" placeholder="Your Name" autocomplete="off">
+        <input type="email" id="email" class="form-control" placeholder="Email Address" autocomplete="off">
+        <input type="password" id="password" class="form-control" placeholder="Password">
 
-        <!-- LOGIN FORM -->
-        <div class="form-box" id="loginBox">
-            <div class="form-title">Welcome Back!</div>
-            <div class="input-group">
-                <i class="fa-solid fa-envelope"></i>
-                <input type="email" id="loginEmail" placeholder="Email Address">
-            </div>
-            <div class="input-group">
-                <i class="fa-solid fa-lock"></i>
-                <input type="password" id="loginPassword" placeholder="Password">
-            </div>
-            <button class="btn-submit" onclick="loginUser()">Login</button>
-            <div class="toggle-text">
-                Don't have an account? <span onclick="showRegister()">Register</span>
-            </div>
-        </div>
+        <button class="auth-btn" onclick="handleAuth()">CONTINUE</button>
 
-        <!-- REGISTER FORM -->
-        <div class="form-box" id="registerBox" style="display: none;">
-            <div class="form-title">Create Account</div>
-            <div class="input-group">
-                <i class="fa-solid fa-user"></i>
-                <input type="text" id="regName" placeholder="Full Name">
-            </div>
-            <div class="input-group">
-                <i class="fa-solid fa-envelope"></i>
-                <input type="email" id="regEmail" placeholder="Email Address">
-            </div>
-            <div class="input-group">
-                <i class="fa-solid fa-lock"></i>
-                <input type="password" id="regPassword" placeholder="Password (Min 6 chars)">
-            </div>
-            <button class="btn-submit" onclick="registerUser()">Register</button>
-            <div class="toggle-text">
-                Already have an account? <span onclick="showLogin()">Login</span>
-            </div>
-        </div>
+        <div id="auth-msg"></div>
     </div>
 
     <script>
-        // FIREBASE CONFIGURATION
+        // FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyC2hkHUlQ1A6XxZmVijhVqhVsPPVZzoJ5Q",
             authDomain: "easy-earn-db419.firebaseapp.com",
@@ -195,87 +136,48 @@
             measurementId: "G-MTY2FYGFFQ"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.database();
+        const database = firebase.database();
 
-        // Check if User is Already Logged In
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                window.location.href = "main.html";
-            }
-        });
-
-        // Toggle Views
-        function showRegister() {
-            document.getElementById('loginBox').style.display = 'none';
-            document.getElementById('registerBox').style.display = 'block';
-            hideAlert();
-        }
-
-        function showLogin() {
-            document.getElementById('registerBox').style.display = 'none';
-            document.getElementById('loginBox').style.display = 'block';
-            hideAlert();
-        }
-
-        function showAlert(msg) {
-            const alertBox = document.getElementById('alertBox');
-            alertBox.innerText = msg;
-            alertBox.style.display = 'block';
-        }
-
-        function hideAlert() {
-            document.getElementById('alertBox').style.display = 'none';
-        }
-
-        // Register Function
-        function registerUser() {
-            const name = document.getElementById('regName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value.trim();
-
-            if (!name || !email || !password) {
-                showAlert("Please fill in all fields.");
-                return;
-            }
-
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    // Save Initial User Data in Realtime Database
-                    db.ref('users/' + user.uid).set({
-                        name: name,
-                        email: email,
-                        coins: 100, // Welcome Bonus Coins
-                        createdAt: new Date().toISOString()
-                    }).then(() => {
-                        window.location.href = "main.html";
-                    });
-                })
-                .catch((error) => {
-                    showAlert(error.message);
-                });
-        }
-
-        // Login Function
-        function loginUser() {
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
+        function handleAuth() {
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const msg = document.getElementById('auth-msg');
 
             if (!email || !password) {
-                showAlert("Please enter email and password.");
+                msg.style.color = '#ef4444';
+                msg.innerText = "Please fill all fields!";
                 return;
             }
 
             auth.signInWithEmailAndPassword(email, password)
-                .then(() => {
-                    window.location.href = "main.html";
-                })
-                .catch((error) => {
-                    showAlert(error.message);
-                });
+            .then((userCredential) => {
+                window.location.href = "main.html";
+            })
+            .catch((error) => {
+                if (error.code === 'auth/user-not-found') {
+                    auth.createUserWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        const uid = userCredential.user.uid;
+                        database.ref('users/' + uid).set({
+                            username: username || 'User',
+                            email: email,
+                            coins: 0
+                        }).then(() => {
+                            window.location.href = "main.html";
+                        });
+                    })
+                    .catch(err => {
+                        msg.style.color = '#ef4444';
+                        msg.innerText = err.message;
+                    });
+                } else {
+                    msg.style.color = '#ef4444';
+                    msg.innerText = error.message;
+                }
+            });
         }
     </script>
 </body>
